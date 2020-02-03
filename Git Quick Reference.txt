@@ -1,0 +1,24 @@
+Basic Git Cheat Sheet:
+
+git <command>
+Commands:
+  status : Checks the state of your local repo. Shows all changes you've made
+  pull : Pulls the latest updates to your branch from the remote repo (github)
+  add <file-name> : Stages a single file to be committed
+  add --all : Stages all files you've edited/added to be committed
+  commit -m "<message>" : Commits all staged changes to your repo
+  push : Pushes all of your local commits to the remote repo (github)
+  **Can not push unless you have the most up-to-date version of your branch
+  branch -a : Lists all branches
+  branch <new name> : Creates a new branch from the branch you're currently working on
+  checkout <branch name> : switches you over to your new branch (remember to pull when you switch)
+
+Other  notes: 
+ - Try not to push directly to master
+ - Master should be kept functional at all time (once we have a working prototype, that is)
+   - Do not merge branches unless the branch's code is stable
+ - Push all of your code changes to whatever branch you're working on when you're finished working
+ - Pull before you begin working
+ - If you run into merge conflicts and aren't sure how to fix, let me know and I'll help the best I can
+ - If you create a new branch and it tells you to set the upstream, just type whatever command it recommends you type
+ - The gitignore prevents you from pushing certain files. Do not push builds or IDE files, add to the gitignore if your computer generates extra unneccessary files
