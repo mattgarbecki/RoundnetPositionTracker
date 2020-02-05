@@ -4,35 +4,13 @@ import sys
 from threading import Thread
 
 clients = []
+client_data = dict()
 
-def clientHandler(c, addr):
-    global clients
-    print(addr, "is Connected")
-    try:
-        while True:
-            data = c.recv(1024).decode("UTF-8")
-            if not data: 
-                break
-            elif data == "quit":
-                print("Removed client", addr)
-                clients.remove(addr)
-                return
-            
-            # TRANSMIT POSITION DATA TO WHEREVER HERE
-            print(data)
-    except:
-        print("Removed client", addr)
-        clients.remove(addr)
-        return
+def sendData():
+    global client_data
+    # SEND TO SERVER
 
-if __name__ == "__main__":
-    URL = "http://localhost:3500/hostgame"
-    NAME = "max"
-    PARAMS = {'name':NAME, 'address':socket.gethostbyname(socket.gethostname())} 
-    r = requests.post(url = URL, json = PARAMS)
-
-    # ERROR HANDLING FOR POST
-
+def runServer():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Bind the socket to the port
@@ -41,10 +19,10 @@ if __name__ == "__main__":
     sock.bind(server_address)
 
     # Listen for incoming connections
-    sock.listen(5)
+    sock.listen(1)
     trds = []
     
-    for i in range(5):
+    for i in range(1):
         try:
             c, addr = sock.accept() 
             clients.append(addr)
@@ -58,5 +36,53 @@ if __name__ == "__main__":
 
     for t in trds:
         t.join()
-    
+
     sock.close()
+
+def clientHandler(c, addr):
+    global clients, client_data
+    client_data[addr] = []
+    print(addr, "is Connected")
+    try:
+        while True:
+            data = c.recv(1024).decode("UTF-8")
+            if not data: 
+                break
+            elif data == "quit":
+                print("Removed client", addr)
+                clients.remove(addr)
+                return
+            
+            client_data[addr].append(data)
+            print(data)
+    except:
+        print("Removed client", addr)
+        clients.remove(addr)
+        return
+
+if __name__ == "__main__":
+    LINK = "http://localhost:3500"
+
+    # GET GAME NAME FROM UI
+    NAME = input("game name: ")
+
+    URL = LINK + "/hostgame"
+    PARAMS = {'name':NAME, 'address':socket.gethostbyname(socket.gethostname())} 
+    r = requests.post(url = URL, json = PARAMS)
+
+    if r.status_code != 200:
+        print("ERROR: No Connection")
+        quit()
+
+    runServer()
+    sendData()
+    
+    URL = LINK + "/remove"
+    PARAMS = {'name':NAME}
+    r = requests.get(url = URL, json = PARAMS)
+
+    if r.status_code != 200:
+        print("ERROR: No Connection")
+        quit()
+    
+    print(client_data)
