@@ -1,7 +1,6 @@
 // Modules
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
 const cors = require('cors');
 
 var app = express();
@@ -24,7 +23,7 @@ app.post("/hostgame", (req, res) => {
         return;
     }
 
-    address_book.set(content.name, content.address);
+    address_book.set(content.name, [content.address, content.port]);
     res.send("OK");
 
 });
