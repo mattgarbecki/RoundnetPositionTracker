@@ -1,46 +1,109 @@
-<MyGrid>:
+WindowManager:
+    MainWindow:
+    SecondWindow:
 
-    name: name
-    team: team
+<OpeningScreen>:
+    name: "opening"
+    canvas.before:
+        Color:
+            rgba: 0.156, 0.249, 0.127, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    FloatLayout:
+        Label:
+            text: "Welcome to the Roundnet Position Tracker!"
+            size_hint: 0.5, 0.2
+            pos_hint:{"x":0.25, "top":0.75}
+        Button:
+            text: "Continue"
+            size_hint: 0.5, 0.2
+            pos_hint:{"x":0.25, "top":0.3}
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "down"
+
+
+<MainWindow>:
+    username: username
     game: game
     email: email
+    name: "main"            
 
-    GridLayout:
-        cols:1
-        size: root.width - 200, root.height -200
-        pos: 100, 100
+    FloatLayout:
+        ToggleButton:
+            text: "Game Player"
+            size_hint: 0.25, 0.1
+            pos_hint: {"x":0.25, "top":0.85}
+            group: 'hostchoice'
+            on_press: root.playertype = 0
+            active: True
+        ToggleButton:
+            text: "Game Host"
+            size_hint: 0.25, 0.1
+            pos_hint: {"x":0.5, "top":0.85}
+            group: 'hostchoice'
+            on_press: root.playertype = 1
+            active: False
 
-        GridLayout:
-            cols:2
 
-            Label:
-                text: "Player Name: "
-
-            TextInput:
-                id: name
-                multiline:False
-
-            Label:
-                text: "Team Name: "
-
-            TextInput:
-                id: team
-                multiline:False
-
-            Label:
-                text: "Game Name: "
-
-            TextInput:
-                id: game
-                multiline:False            
-
-            Label:
-                text: "Email: "
-
-            TextInput:
-                id: email
-                multiline:False
-
+        Label:
+            text: "Username: "
+            size_hint: 0.2, 0.2
+            pos_hint: {"x":0.15, "top":0.75}
+        TextInput:
+            id: username
+            size_hint: 0.4, 0.1
+            pos_hint: {"x":0.35, "top":0.7}
+        
+        Label:
+            text: "Game Name: "
+            size_hint: 0.2, 0.2
+            pos_hint: {"x":0.15, "top":0.60}
+        TextInput:
+            id: game
+            size_hint: 0.4, 0.1
+            pos_hint: {"x":0.35, "top":0.55}
+        
+        Label:
+            text: "Email: "
+            size_hint: 0.2, 0.2
+            pos_hint: {"x":0.15, "top":0.45}
+        TextInput:
+            id: email
+            size_hint: 0.4, 0.1
+            pos_hint: {"x":0.35, "top":0.4}
+        
         Button:
-            text:"Submit"
-            on_press: root.btn()
+            text: "Submit"
+            size_hint: 0.5, 0.2
+            pos_hint: {"x":0.25, "top":0.25}
+            on_release:
+                #get this button to check if we have selected player type
+                app.root.current = "second"
+                root.manager.transition.direction = "left"
+                root.submit()
+
+
+
+
+<SecondWindow>:
+    name: "second"
+
+    FloatLayout:
+        Button:
+            text: "Finish Game"
+            size_hint: 0.5, 0.2
+            pos_hint:{"x":0.25, "top":0.8}
+            on_release:
+                root.stoprecording()
+            
+        Button:
+            text: "Go Back"
+            size_hint: 0.5, 0.2
+            pos_hint:{"x":0.25, "top":0.4}
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "right"
+
