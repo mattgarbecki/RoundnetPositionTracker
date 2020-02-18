@@ -1,28 +1,48 @@
 import requests
 import socket
 import sys
+import random
 from threading import Thread
+import smtplib, ssl, json
 
 clients = []
 client_data = dict()
 
-def sendData():
+def getDataPoint():
+    return [1,1]
+
+def sendData(link, name):
     global client_data
     # SEND TO SERVER
+    DATA = {"gamedata": client_data, "name":name}
 
-def runServer():
+    port = 465  # For SSL
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    message = 'Subject: {}\n\n{}'.format("GAME: " + DATA["name"], DATA["gamedata"])
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        server.login("leawoodmax@gmail.com", "FloatedFive27")
+        server.sendmail("leawoodmax@gmail.com", "leawoodmax@yahoo.com", message)
+        server.quit()
+    print("done")
+
+
+def runServer(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Bind the socket to the port
-    server_address = (socket.gethostbyname(socket.gethostname()), 8000)
+    server_address = (socket.gethostbyname(socket.gethostname()), port)
     print('starting up on {} port {}'.format(*server_address))
     sock.bind(server_address)
 
     # Listen for incoming connections
-    sock.listen(1)
+    sock.listen(2)
     trds = []
     
-    for i in range(1):
+    for i in range(2):
         try:
             c, addr = sock.accept() 
             clients.append(addr)
@@ -33,49 +53,61 @@ def runServer():
         except:
             print("Keyboard Interupt, goodbye")
             break
+    
+    t = Thread(target=selfHandler)
+    trds.append(t)
+    t.daemon = True
+    t.start()
 
     for t in trds:
         t.join()
 
     sock.close()
 
+def selfHandler():
+    data = ""
+    client_data["host"] = []
+    client_data["host"] = data
+    return
+
 def clientHandler(c, addr):
     global clients, client_data
-    client_data[addr] = []
+    client_data[addr[1]] = []
     print(addr, "is Connected")
     try:
         while True:
-            data = c.recv(1024).decode("UTF-8")
+            data = c.recv(1024).decode("UTF-8").split("%")
             if not data: 
                 break
-            elif data == "quit":
+            elif data[0] == "quit":
                 print("Removed client", addr)
                 clients.remove(addr)
                 return
             
-            client_data[addr].append(data)
-            print(data)
+            client_data[addr[1]].append({"text": data[0], "time":data[1]})
+            
     except:
         print("Removed client", addr)
         clients.remove(addr)
         return
 
-if __name__ == "__main__":
+def manageServer():
     LINK = "http://localhost:3500"
 
     # GET GAME NAME FROM UI
     NAME = input("game name: ")
 
     URL = LINK + "/hostgame"
-    PARAMS = {'name':NAME, 'address':socket.gethostbyname(socket.gethostname())} 
+    PORT = random.randint(1, 65535)
+    PARAMS = {'name':NAME, 'address':socket.gethostbyname(socket.gethostname()), 'port':PORT} 
     r = requests.post(url = URL, json = PARAMS)
 
     if r.status_code != 200:
         print("ERROR: No Connection")
         quit()
 
-    runServer()
-    sendData()
+    runServer(PORT)
+    sendData(LINK, NAME)
     
     URL = LINK + "/remove"
     PARAMS = {'name':NAME}
@@ -84,5 +116,6 @@ if __name__ == "__main__":
     if r.status_code != 200:
         print("ERROR: No Connection")
         quit()
-    
-    print(client_data)
+
+if __name__ == "__main__":
+    manageServer()
