@@ -7,10 +7,13 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.core.window import Window
 from kivy.animation import Animation 
 from kivy.clock import Clock
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
-
+#first screen and transition
 class OpeningScreen(Screen):
-    pass
+    def change_screen(self):
+        kv.switch_to(screens[1], direction = 'down')
 
 #controls back end of the main opening window
 class MainWindow(Screen):
@@ -32,9 +35,14 @@ class MainWindow(Screen):
         print(self.playertype)
         #allows host to choose number of players from correct screen
         if self.playertype == 1:
-            kv.current = 'playeramountchoice'
+            kv.switch_to(screens[3], direction = 'left')
+        elif self.playertype == 0:
+            kv.switch_to(screens[2], direction = 'left')
         else:
-            kv.current = 'recording'                
+            popup = Popup(title='Player Selection Error',
+                content = Label(text='Please select your player type'),
+                size_hint = (0.4, 0.4))    
+            popup.open()
     
 
 class RecordingWindow(Screen):
@@ -42,7 +50,9 @@ class RecordingWindow(Screen):
     stop collecting data'''
     
     #recording.add_widget(Image(source='ballimage.png'))
-    
+    def goback(self):
+        kv.switch_to(screens[1], direction = 'right')
+        
     def stoprecording(self):
         print("Stop recording button is working")
     
@@ -68,24 +78,21 @@ class RecordingWindow(Screen):
 class HostPlayersChoiceWindow(Screen):
     def choosenum(self, totplayers):
         print(totplayers)
-        kv.current = 'recording'
+        kv.switch_to(screens[2], direction = 'left')
 
 class WindowManager(ScreenManager):
     pass
 
 #this loads the kivy code file with the GUI customizations
-kv = Builder.load_file("my.kv")
-#sm = ScreenManager(transition = SwapTransition())
+loading = Builder.load_file("my.kv")
 screens = [OpeningScreen(name="opening"), MainWindow(name="main"),
            RecordingWindow(name="recording"),
            HostPlayersChoiceWindow(name="playeramountchoice")]
-for screen in screens:
-    kv.add_widget(screen)
     
-
+kv = ScreenManager(transition=SwapTransition())
 
 #sets first screen to open
-kv.current = "opening"
+kv.switch_to(screens[0])
 
 #complies app
 class MyMainApp(App):

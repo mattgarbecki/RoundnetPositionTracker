@@ -2,6 +2,7 @@ WindowManager:
     OpeningScreen:
     MainWindow:
     RecordingWindow:
+    HostPlayersChoiceWindow:
 
 <OpeningScreen>:
     name: "opening"
@@ -22,8 +23,7 @@ WindowManager:
             size_hint: 0.5, 0.2
             pos_hint:{"x":0.25, "top":0.3}
             on_release:
-                app.root.current = "main"
-                root.manager.transition.direction = "down"
+                root.change_screen()
 
 
 <MainWindow>:
@@ -39,15 +39,12 @@ WindowManager:
             pos_hint: {"x":0.25, "top":0.85}
             group: 'hostchoice'
             on_press: root.playertype = 0
-            active: True
         ToggleButton:
             text: "Game Host"
             size_hint: 0.25, 0.1
             pos_hint: {"x":0.5, "top":0.85}
             group: 'hostchoice'
             on_press: root.playertype = 1
-            active: False
-
 
         Label:
             text: "Username: "
@@ -82,7 +79,6 @@ WindowManager:
             pos_hint: {"x":0.25, "top":0.25}
             on_release:
                 #get this button to check if we have selected player type
-                root.manager.transition.direction = "left"
                 root.submit()
               
 
@@ -112,9 +108,14 @@ WindowManager:
             size_hint: 0.2, 0.1
             pos_hint:{"x":0.1, "top":0.9}
             on_release:
-                app.root.current = "main"
-                root.manager.transition.direction = "right"
-                #root.animate(ball)
+                root.goback()
+
+        Button:
+            text: "Test Animation"
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.7, "top":0.9}
+            on_release:
+                root.animate(ball)
 
 
 <HostPlayersChoiceWindow>
@@ -131,8 +132,6 @@ WindowManager:
             size_hint: 0.2, 0.1
             pos_hint:{"x":0.2, "top":0.6}
             on_release:
-                app.root.current = "recording"
-                root.manager.transition.direction = "left"
                 root.choosenum(1)
 
         Button:
@@ -140,8 +139,6 @@ WindowManager:
             size_hint: 0.2, 0.1
             pos_hint:{"x":0.6, "top":0.6}
             on_release:
-                app.root.current = "recording"
-                root.manager.transition.direction = "left"
                 root.choosenum(2)
 
         Button:
@@ -149,8 +146,6 @@ WindowManager:
             size_hint: 0.2, 0.1
             pos_hint:{"x":0.2, "top":0.3}
             on_release:
-                app.root.current = "recording"
-                root.manager.transition.direction = "left"
                 root.choosenum(3)
 
         Button:
@@ -158,6 +153,4 @@ WindowManager:
             size_hint: 0.2, 0.1
             pos_hint:{"x":0.6, "top":0.3}
             on_release:
-                app.root.current = "recording"
-                root.manager.transition.direction = "left"
                 root.choosenum(4)
