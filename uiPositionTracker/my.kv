@@ -1,6 +1,7 @@
 WindowManager:
+    OpeningScreen:
     MainWindow:
-    SecondWindow:
+    RecordingWindow:
 
 <OpeningScreen>:
     name: "opening"
@@ -81,29 +82,82 @@ WindowManager:
             pos_hint: {"x":0.25, "top":0.25}
             on_release:
                 #get this button to check if we have selected player type
-                app.root.current = "second"
                 root.manager.transition.direction = "left"
                 root.submit()
+              
 
 
 
 
-<SecondWindow>:
-    name: "second"
+
+<RecordingWindow>:
+    ball: ball
+    name: "recording"
 
     FloatLayout:
         Button:
             text: "Finish Game"
-            size_hint: 0.5, 0.2
-            pos_hint:{"x":0.25, "top":0.8}
+            size_hint: 0.5, 0.1
+            pos_hint:{"x":0.25, "top":0.15}
             on_release:
                 root.stoprecording()
+        Image:
+            id: ball
+            source: "ballimage.png"
+            size_hint:0.1, 0.1
+            pos_hint:{"x":0.325,"top":0.325}
             
         Button:
             text: "Go Back"
-            size_hint: 0.5, 0.2
-            pos_hint:{"x":0.25, "top":0.4}
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.1, "top":0.9}
             on_release:
                 app.root.current = "main"
                 root.manager.transition.direction = "right"
+                #root.animate(ball)
 
+
+<HostPlayersChoiceWindow>
+    name: "playeramountchoice"
+
+    FloatLayout:
+        Label:
+            text: "Please choose how many players you expect to be recording data in this game:"
+            size_hint: 0.25, 0.1
+            pos_hint: {"x":0.375, "top":0.85}
+            
+        Button:
+            text: "1 Player (Only myself)"
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.2, "top":0.6}
+            on_release:
+                app.root.current = "recording"
+                root.manager.transition.direction = "left"
+                root.choosenum(1)
+
+        Button:
+            text: "2 Players"
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.6, "top":0.6}
+            on_release:
+                app.root.current = "recording"
+                root.manager.transition.direction = "left"
+                root.choosenum(2)
+
+        Button:
+            text: "3 Players"
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.2, "top":0.3}
+            on_release:
+                app.root.current = "recording"
+                root.manager.transition.direction = "left"
+                root.choosenum(3)
+
+        Button:
+            text: "4 Players"
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.6, "top":0.3}
+            on_release:
+                app.root.current = "recording"
+                root.manager.transition.direction = "left"
+                root.choosenum(4)

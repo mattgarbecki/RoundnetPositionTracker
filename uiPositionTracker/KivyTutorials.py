@@ -5,6 +5,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.core.window import Window
+from kivy.animation import Animation 
+from kivy.clock import Clock
+
 
 class OpeningScreen(Screen):
     pass
@@ -26,15 +29,46 @@ class MainWindow(Screen):
         self.username.text = ""
         self.email.text = "" 
         self.game.text = ""
-        #sm.current = 'second'
+        print(self.playertype)
+        #allows host to choose number of players from correct screen
+        if self.playertype == 1:
+            kv.current = 'playeramountchoice'
+        else:
+            kv.current = 'recording'                
+    
 
-class SecondWindow(Screen):
+class RecordingWindow(Screen):
     '''this function responds to the finish game button, will hook to back end to
     stop collecting data'''
+    
+    #recording.add_widget(Image(source='ballimage.png'))
+    
     def stoprecording(self):
         print("Stop recording button is working")
+    
+    def animate(self, instance):
+        # create an animation object. This object could be stored 
+        # and reused each call or reused across different widgets. 
+        # += is a sequential step, while &= is in parallel 
+        animation = Animation(pos =(100, 100))#, t ='out_bounce') 
+        animation += Animation(pos =(200, 100))#, t ='out_bounce') 
+        animation &= Animation(size =(500, 500)) 
+        animation += Animation(size =(100, 50)) 
+        animation.repeat = True
+  
+        # apply the animation on the button, passed in the "instance" argument 
+        # Notice that default 'click' animation (changing the button 
+        # color while the mouse is down) is unchanged. 
+        animation.start(self.ids.ball)     
+        print("Ran animation function")
 
+    #Clock.schedule_once(animate(self.ids.ball), 20)
 
+#host chooses player amount
+class HostPlayersChoiceWindow(Screen):
+    def choosenum(self, totplayers):
+        print(totplayers)
+        kv.current = 'recording'
 
 class WindowManager(ScreenManager):
     pass
@@ -43,7 +77,8 @@ class WindowManager(ScreenManager):
 kv = Builder.load_file("my.kv")
 #sm = ScreenManager(transition = SwapTransition())
 screens = [OpeningScreen(name="opening"), MainWindow(name="main"),
-           SecondWindow(name="second")]
+           RecordingWindow(name="recording"),
+           HostPlayersChoiceWindow(name="playeramountchoice")]
 for screen in screens:
     kv.add_widget(screen)
     
