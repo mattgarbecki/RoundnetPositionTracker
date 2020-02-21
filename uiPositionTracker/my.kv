@@ -82,40 +82,44 @@ WindowManager:
                 root.submit()
               
 
-
-
-
-
 <RecordingWindow>:
+    recordbutton: recordbutton
     ball: ball
+    recordinglabel: recordinglabel
     name: "recording"
 
     FloatLayout:
         Button:
-            text: "Finish Game"
+            id: recordbutton
+            text: "Start Recording Positions"
             size_hint: 0.5, 0.1
             pos_hint:{"x":0.25, "top":0.15}
             on_release:
-                root.stoprecording()
+                root.startrecording()
+
+        Label:
+            id: recordinglabel
+            text: "Center your phone on the net and then click the button to start!"
+            size_hint: 0.5, 0.1
+            pos_hint:{"x":0.25, "top":0.9}
+            
+        Image:
+            source: "setpic.png"
+            size_hint: 0.6, 0.3
+            pos_hint: {"x":0.2, "top":0.57}
+
         Image:
             id: ball
             source: "ballimage.png"
-            size_hint:0.1, 0.1
-            pos_hint:{"x":0.325,"top":0.325}
-            
+            size_hint:0.07, 0.07
+            pos_hint:{"x":0.475,"top":0.5}
+
         Button:
             text: "Go Back"
             size_hint: 0.2, 0.1
-            pos_hint:{"x":0.1, "top":0.9}
+            pos_hint:{"x":0.1, "top":0.8}
             on_release:
                 root.goback()
-
-        Button:
-            text: "Test Animation"
-            size_hint: 0.2, 0.1
-            pos_hint:{"x":0.7, "top":0.9}
-            on_release:
-                root.animate(ball)
 
 
 <HostPlayersChoiceWindow>

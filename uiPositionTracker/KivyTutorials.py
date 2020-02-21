@@ -6,9 +6,10 @@ from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.core.window import Window
 from kivy.animation import Animation 
-from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.image import Image
+import random
 
 #first screen and transition
 class OpeningScreen(Screen):
@@ -38,6 +39,7 @@ class MainWindow(Screen):
             kv.switch_to(screens[3], direction = 'left')
         elif self.playertype == 0:
             kv.switch_to(screens[2], direction = 'left')
+            #screens[2].animate()
         else:
             popup = Popup(title='Player Selection Error',
                 content = Label(text='Please select your player type'),
@@ -48,37 +50,53 @@ class MainWindow(Screen):
 class RecordingWindow(Screen):
     '''this function responds to the finish game button, will hook to back end to
     stop collecting data'''
-    
+        
     #recording.add_widget(Image(source='ballimage.png'))
     def goback(self):
         kv.switch_to(screens[1], direction = 'right')
+    
+    def startrecording(self):
+        if self.ids.recordbutton.text == "Start Recording Positions":
+            self.ids.recordbutton.text = "Stop Recording Position Data"
+            self.ids.recordinglabel.text = "Recording Data Now!"
+            screens[2].animate()
+        else:
+            self.ids.recordbutton.text = "Finished Game!"
+            self.ids.recordinglabel.text = "Finished Game! Waiting for other's data to send!"
+            self.ids.recordbutton.disabled = True
         
     def stoprecording(self):
+        animate(ballobj)
         print("Stop recording button is working")
     
-    def animate(self, instance):
-        # create an animation object. This object could be stored 
-        # and reused each call or reused across different widgets. 
-        # += is a sequential step, while &= is in parallel 
-        animation = Animation(pos =(100, 100))#, t ='out_bounce') 
-        animation += Animation(pos =(200, 100))#, t ='out_bounce') 
-        animation &= Animation(size =(500, 500)) 
-        animation += Animation(size =(100, 50)) 
+    def animate(self):
+        #ball animation
+        ballx = 0.475
+        bally = 0.5
+        bounce_time = 0.5
+        hcorr = 0.3
+        tcorr = 0.6
+        height = 0.2
+        bounces = 10
+        self.ids.ball.pos_hint = {"x":ballx, "top":bally}
+        
+        animation = Animation(pos_hint ={"top":bally + height}, duration = bounce_time)
+        for i in range(bounces):
+            bounce_time *= tcorr
+            height *= hcorr
+            animation += Animation(pos_hint ={"top":bally}, duration = bounce_time)  
+            animation += Animation(pos_hint ={"top":bally + height}, duration = bounce_time) 
+            
         animation.repeat = True
-  
-        # apply the animation on the button, passed in the "instance" argument 
-        # Notice that default 'click' animation (changing the button 
-        # color while the mouse is down) is unchanged. 
-        animation.start(self.ids.ball)     
-        print("Ran animation function")
-
-    #Clock.schedule_once(animate(self.ids.ball), 20)
-
+        animation.start(self.ids.ball) 
+        
 #host chooses player amount
 class HostPlayersChoiceWindow(Screen):
     def choosenum(self, totplayers):
         print(totplayers)
         kv.switch_to(screens[2], direction = 'left')
+        #screens[2].animate()
+        
 
 class WindowManager(ScreenManager):
     pass
