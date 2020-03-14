@@ -9,6 +9,7 @@ from kivy.animation import Animation
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.image import Image
+from kivy.clock import Clock
 #from kivy.utils import platform
 
 #first screen and transition
@@ -89,6 +90,7 @@ class RecordingWindow(Screen):
         else:
             val = accelerometer.acceleration
             accelerometer.disable()
+            Clock.unschedule(self.get_acceleration)
             
             self.ids.recordbutton.text = "Finished Game!"
             self.ids.recordinglabel.text = "Finished Game! Waiting for other's data to send!"
