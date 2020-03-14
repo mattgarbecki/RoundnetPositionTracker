@@ -9,12 +9,21 @@ from kivy.animation import Animation
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.image import Image
-import random
+#from kivy.utils import platform
 
 #first screen and transition
 class OpeningScreen(Screen):
     def change_screen(self):
         kv.switch_to(screens[1], direction = 'down')
+    def font_size(self, size, h, w, text):
+        num = len(text)
+        print(size, h, w, num)
+        first = size[0] * h - size[0] * num
+        second = size[1] * w - size[1] * num
+        if first < second:
+            return first
+        else:
+            return second    
 
 #controls back end of the main opening window
 class MainWindow(Screen):
@@ -46,6 +55,14 @@ class MainWindow(Screen):
                 size_hint = (0.4, 0.4))    
             popup.open()
     
+    def font_size(self, size, h, w):
+        first = size[0] * h
+        second = size[1] * w
+        if first < second:
+            return first
+        else:
+            return second
+    
 
 class RecordingWindow(Screen):
     '''this function responds to the finish game button, will hook to back end to
@@ -54,13 +71,25 @@ class RecordingWindow(Screen):
     #recording.add_widget(Image(source='ballimage.png'))
     def goback(self):
         kv.switch_to(screens[1], direction = 'right')
+
     
     def startrecording(self):
+        popup = Popup(title='Player Selection Error',
+                content = Label(text='Make sure to center your phone on the net before continuing'),
+                size_hint = (0.4, 0.4)) 
+        popup.open()
         if self.ids.recordbutton.text == "Start Recording Positions":
+            #collecting accelerometer data
+            accelerometer.enable()
+            Clock.schedule_interval(self.get_acceleration, 1 / 20.)
+                
             self.ids.recordbutton.text = "Stop Recording Position Data"
             self.ids.recordinglabel.text = "Recording Data Now!"
             screens[2].animate()
         else:
+            val = accelerometer.acceleration
+            accelerometer.disable()
+            
             self.ids.recordbutton.text = "Finished Game!"
             self.ids.recordinglabel.text = "Finished Game! Waiting for other's data to send!"
             self.ids.recordbutton.disabled = True
@@ -69,26 +98,24 @@ class RecordingWindow(Screen):
         animate(ballobj)
         print("Stop recording button is working")
     
-    def animate(self):
-        #ball animation
-        ballx = 0.475
-        bally = 0.5
-        bounce_time = 0.5
-        hcorr = 0.3
-        tcorr = 0.6
+    def animate(self):        
+        #ball bounce animation
         height = 0.2
-        bounces = 10
-        self.ids.ball.pos_hint = {"x":ballx, "top":bally}
-        
-        animation = Animation(pos_hint ={"top":bally + height}, duration = bounce_time)
-        for i in range(bounces):
-            bounce_time *= tcorr
-            height *= hcorr
-            animation += Animation(pos_hint ={"top":bally}, duration = bounce_time)  
-            animation += Animation(pos_hint ={"top":bally + height}, duration = bounce_time) 
-            
-        animation.repeat = True
-        animation.start(self.ids.ball) 
+        bally = 0.5
+        anim2 = Animation(pos_hint ={"top":bally + height}, duration = 0.5)
+        anim2 += Animation(pos_hint ={"top":bally}, t='out_bounce')          
+        anim2.repeat = True        
+        anim2.start(self.ids.ball) 
+    
+    def font_size(self, size, h, w, text):
+        num = len(text)
+        print(size, h, w, num)
+        first = size[0] * h
+        second = size[1] * w
+        if first < second:
+            return first
+        else:
+            return second     
         
 #host chooses player amount
 class HostPlayersChoiceWindow(Screen):
