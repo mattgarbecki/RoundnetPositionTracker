@@ -1,9 +1,12 @@
 import requests
 import socket
-import time
+import astropy.io.misc.asdf.tags.time.tests.test_time
+import sensordroid
+
 
 def getDataPoint():
-    return [1,1]
+    sensordroid
+    return 
 
 def runClient(address, port):
     # Create a TCP/IP socket
@@ -43,6 +46,8 @@ def manageClient():
         print("ERROR: gamename not found")
         quit()
     
+    
+
     DATA = r.text.strip("[]").split(",")
     runClient(DATA[0].strip("\""), int(DATA[1]))
 

@@ -21,10 +21,14 @@ def sendData(link, name):
     # Create a secure SSL context
     context = ssl.create_default_context()
 
-    message = 'Subject: {}\n\n{}'.format("GAME: " + DATA["name"], DATA["gamedata"])
+    textdata = ""
+
+    
+
+    message = 'Subject: {}\n\n{}\n\nText Based Data: \n{}'.format("GAME: " + DATA["name"], DATA["gamedata"], textdata)
 
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login("leawoodmax@gmail.com", "FloatedFive27")
+        server.login("sportspositiontracker@gmail.com", "hip9og-hEtryw")
         server.sendmail("leawoodmax@gmail.com", "leawoodmax@yahoo.com", message)
         server.quit()
     print("done")
@@ -107,7 +111,7 @@ def manageServer():
         quit()
 
     runServer(PORT)
-    sendData(LINK, NAME)
+    #sendData(LINK, NAME)
     
     URL = LINK + "/remove"
     PARAMS = {'name':NAME}

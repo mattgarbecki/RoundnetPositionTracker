@@ -8,6 +8,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.listen(3500);
 
+translateToCSV('a');
+
 var address_book = new Map();
 
 app.post("/hostgame", (req, res) => {
@@ -58,3 +60,23 @@ app.get("/remove", (req, res) => {
     res.send("OK");
 
 });
+
+
+function translateToCSV(data) {
+    const rows = [
+        ["time", "x", "y", "z"],
+        ["1", "0.1", "0.2", "-0.5"],
+        ["2", "-0.5", "0.1", "-0.3"],
+        ["3", "-0.3", "0.1", "0.5"]
+    ];
+    
+    let csvContent = "";
+    
+    rows.forEach(function(rowArray) {
+        let row = rowArray.join(",");
+        csvContent += row + "\r\n";
+    });
+
+    var encodedUri = encodeURI(csvContent);
+    console.log(csvContent);
+}
