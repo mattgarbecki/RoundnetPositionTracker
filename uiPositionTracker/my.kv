@@ -125,9 +125,31 @@ WindowManager:
     recordbutton: recordbutton
     ball: ball
     recordinglabel: recordinglabel
+    acceldatax: acceldatax
+    acceldatay: acceldatay
+    acceldataz: acceldataz
     name: "recording"
 
     FloatLayout:
+        Label:
+            id: acceldatax
+            text: "X: "
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.1, "top":0.5}
+            halign: 'left'
+        Label:
+            id: acceldatay
+            text: "Y: "
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.1, "top":0.45}
+            halign: 'left'
+        Label:
+            id: acceldataz
+            text: "Z: "
+            size_hint: 0.2, 0.1
+            pos_hint:{"x":0.1, "top":0.4}
+            halign: 'left'
+        
         Button:
             id: recordbutton
             text: "Start Recording Positions"

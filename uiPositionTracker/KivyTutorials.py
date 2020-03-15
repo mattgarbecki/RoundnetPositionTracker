@@ -11,6 +11,7 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.clock import Clock
 #from kivy.utils import platform
+from plyer import accelerometer
 
 #first screen and transition
 class OpeningScreen(Screen):
@@ -68,6 +69,9 @@ class MainWindow(Screen):
 class RecordingWindow(Screen):
     '''this function responds to the finish game button, will hook to back end to
     stop collecting data'''
+    
+    def get_data(self):
+        self.ids.acceldata.text = accelerometer.acceleration
         
     #recording.add_widget(Image(source='ballimage.png'))
     def goback(self):
@@ -83,18 +87,24 @@ class RecordingWindow(Screen):
             #collecting accelerometer data
             accelerometer.enable()
             Clock.schedule_interval(self.get_acceleration, 1 / 20.)
-                
+            
             self.ids.recordbutton.text = "Stop Recording Position Data"
             self.ids.recordinglabel.text = "Recording Data Now!"
             screens[2].animate()
         else:
-            val = accelerometer.acceleration
             accelerometer.disable()
             Clock.unschedule(self.get_acceleration)
             
             self.ids.recordbutton.text = "Finished Game!"
             self.ids.recordinglabel.text = "Finished Game! Waiting for other's data to send!"
             self.ids.recordbutton.disabled = True
+            
+    def get_acceleration(self, dt): 
+        val = accelerometer.acceleration[:3]
+        if not val == (None, None, None):
+            self.ids.acceldatax.text = "X: " + str(val[0])
+            self.ids.acceldatay.text = "Y: " + str(val[1])
+            self.ids.acceldataz.text = "Z: " + str(val[2])        
         
     def stoprecording(self):
         animate(ballobj)
