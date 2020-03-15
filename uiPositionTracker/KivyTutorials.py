@@ -13,6 +13,13 @@ from kivy.clock import Clock
 #from kivy.utils import platform
 from plyer import accelerometer
 
+# Global variables
+gameData = dict()
+gameData_x = 0
+gameData_y = 0
+gameData_z = 0
+start_time = 0.0
+
 #first screen and transition
 class OpeningScreen(Screen):
     def change_screen(self):
@@ -100,11 +107,22 @@ class RecordingWindow(Screen):
             self.ids.recordbutton.disabled = True
             
     def get_acceleration(self, dt): 
+        global gameData, gameData_x, gameData_y, gameData_z, start_time
+
         val = accelerometer.acceleration[:3]
+        start_time = start_time + 0.20
+
         if not val == (None, None, None):
-            self.ids.acceldatax.text = "X: " + str(val[0])
-            self.ids.acceldatay.text = "Y: " + str(val[1])
-            self.ids.acceldataz.text = "Z: " + str(val[2])        
+
+            gameData_x = gameData_x + val[0]
+            gameData_y = gameData_y + val[1]
+            gameData_z = gameData_z + val[2]
+
+            self.ids.acceldatax.text = "X: " + str(gameData_x)
+            self.ids.acceldatay.text = "Y: " + str(gameData_y)
+            self.ids.acceldataz.text = "Z: " + str(gameData_z)
+        
+        gameData[start_time] = [gameData_x, gameData_y, gameData_z]
         
     def stoprecording(self):
         animate(ballobj)
