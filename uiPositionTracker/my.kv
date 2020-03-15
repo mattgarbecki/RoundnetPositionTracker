@@ -15,6 +15,7 @@ WindowManager:
     MainWindow:
     RecordingWindow:
     HostPlayersChoiceWindow:
+    TeamChoiceWindow:
 
 <OpeningScreen>:
     name: "opening"
@@ -134,14 +135,17 @@ WindowManager:
             pos_hint:{"x":0.25, "top":0.15}
             on_release:
                 root.startrecording()
-            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+            font_size: root.long_font(self.size_hint, self.height, self.width, self.text)
 
         Label:
             id: recordinglabel
             text: "Center your phone on the net and then click the button to start!"
-            size_hint: 0.5, 0.1
-            pos_hint:{"x":0.25, "top":0.9}
-            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+            size_hint: 0.5, 0.3
+            pos_hint:{'center':(0.5,0.8)}
+            font_size: root.long_font(self.size_hint, self.height, self.width, self.text)
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
             
         Image:
             source: "setpic.png"

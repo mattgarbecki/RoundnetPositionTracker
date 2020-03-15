@@ -110,14 +110,23 @@ class RecordingWindow(Screen):
         anim2.start(self.ids.ball) 
     
     def font_size(self, size, h, w, text):
-        num = len(text)
-        print(size, h, w, num)
         first = size[0] * h
         second = size[1] * w
         if first < second:
             return first
         else:
-            return second     
+            return second  
+    
+    def long_font(self, size, h, w, text):
+        num = len(text)
+        print(num)
+        num = num ** (1 / 2) * (1 / 2)
+        first = size[0] * h / num
+        second = size[1] * w / num
+        if first < second:
+            return first
+        else:
+            return second          
         
 #host chooses player amount
 class HostPlayersChoiceWindow(Screen):
