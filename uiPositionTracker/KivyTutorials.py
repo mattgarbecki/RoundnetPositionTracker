@@ -48,7 +48,7 @@ class MainWindow(Screen):
         if self.playertype == 1:
             kv.switch_to(screens[3], direction = 'left')
         elif self.playertype == 0:
-            kv.switch_to(screens[2], direction = 'left')
+            kv.switch_to(screens[4], direction = 'left')
             #screens[2].animate()
         else:
             popup = Popup(title='Player Selection Error',
@@ -121,10 +121,54 @@ class RecordingWindow(Screen):
         
 #host chooses player amount
 class HostPlayersChoiceWindow(Screen):
-    def choosenum(self, totplayers):
-        print(totplayers)
+    def continue_on(self):
+        kv.switch_to(screens[4], direction = 'right')
+        
+    def update_spinners(self):
+        #figure out what sport is being played
+        if self.ids.sportdrop.text == 'Roundnet':
+            val = 2
+        elif self.ids.sportdrop.text == 'Basketball':
+            val = 5
+        elif self.ids.sportdrop.text == 'Soccer':
+            val = 11
+        elif self.ids.sportdrop.text == 'Football':
+            val = 11
+        elif self.ids.sportdrop.text == 'Tennis':
+            val = 2
+        elif self.ids.sportdrop.text == 'Swimming':
+            val = 1
+        elif self.ids.sportdrop.text == 'Hockey':
+            val = 6
+        #update spinners with appropriate amount of players
+        arr = [0] * val
+        for i in range(val):
+            arr[i] = str(i)
+        self.ids.offensedrop.values = arr
+        self.ids.offensedrop.text = str(val)
+        self.ids.defensedrop.values = arr
+        self.ids.defensedrop.text = str(val)        
+        
+
+    def font_size(self, size, h, w, text):
+        first = size[0] * h
+        second = size[1] * w
+        if first < second:
+            return first
+        else:
+            return second    
+
+class TeamChoiceWindow(Screen):
+    def continue_on(self):
         kv.switch_to(screens[2], direction = 'left')
-        #screens[2].animate()
+    
+    def font_size(self, size, h, w, text):
+        first = size[0] * h
+        second = size[1] * w
+        if first < second:
+            return first
+        else:
+            return second    
         
 
 class WindowManager(ScreenManager):
@@ -132,9 +176,11 @@ class WindowManager(ScreenManager):
 
 #this loads the kivy code file with the GUI customizations
 loading = Builder.load_file("my.kv")
-screens = [OpeningScreen(name="opening"), MainWindow(name="main"),
+screens = [OpeningScreen(name="opening"), 
+           MainWindow(name="main"),
            RecordingWindow(name="recording"),
-           HostPlayersChoiceWindow(name="playeramountchoice")]
+           HostPlayersChoiceWindow(name="playeramountchoice"),
+           TeamChoiceWindow(name='teamchoice')]
     
 kv = ScreenManager(transition=SwapTransition())
 

@@ -1,3 +1,15 @@
+<ScaleLabel@Label>:
+	_scale: 1. if self.texture_size[0] < (0.8 * self.width) else (float(self.width) / self.texture_size[0]) * 0.8
+	canvas.before:
+		PushMatrix
+		Scale:
+			origin: self.center
+			x: self._scale or 1.
+			y: self._scale or 1.
+	canvas.after:
+		PopMatrix
+
+
 WindowManager:
     OpeningScreen:
     MainWindow:
@@ -14,16 +26,28 @@ WindowManager:
             size: self.size
     
     FloatLayout:
+        ScaleLabel:
+            pos_hint:{"x":0.25,"top":0.25}
+            halign: "center"
+            text: "Testing this automatic sizing bullshit"
+            padding: dp(12), dp(12)
+            font_size: self.height * 0.5
         Label:
-            text: "Welcome to the Roundnet Position Tracker!"
+            text: "Roundnet Position Tracker"
+            #size_hint_y: None
+            #text_size: self.width, None
+            #height: self.texture_size[1]
             size_hint: 0.5, 0.2
             pos_hint:{"x":0.25, "top":0.75}
+            halign: "center"
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
         Button:
             text: "Continue"
             size_hint: 0.5, 0.2
             pos_hint:{"x":0.25, "top":0.3}
             on_release:
                 root.change_screen()
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
 
 
 <MainWindow>:
@@ -37,19 +61,24 @@ WindowManager:
             text: "Game Player"
             size_hint: 0.25, 0.1
             pos_hint: {"x":0.25, "top":0.85}
+            font_size: root.font_size(self.size_hint, self.height, self.width)
             group: 'hostchoice'
             on_press: root.playertype = 0
         ToggleButton:
             text: "Game Host"
             size_hint: 0.25, 0.1
             pos_hint: {"x":0.5, "top":0.85}
+            font_size: root.font_size(self.size_hint, self.height, self.width)
             group: 'hostchoice'
             on_press: root.playertype = 1
 
         Label:
             text: "Username: "
             size_hint: 0.2, 0.2
-            pos_hint: {"x":0.15, "top":0.75}
+            pos_hint: {"x":0.14, "top":0.75}
+            halign: 'right'
+            valign: 'middle'
+            font_size: root.font_size(self.size_hint, self.height, self.width)
         TextInput:
             id: username
             size_hint: 0.4, 0.1
@@ -58,7 +87,10 @@ WindowManager:
         Label:
             text: "Game Name: "
             size_hint: 0.2, 0.2
-            pos_hint: {"x":0.15, "top":0.60}
+            pos_hint: {"x":0.12, "top":0.60}
+            halign: 'right'
+            valign: 'middle'
+            font_size: root.font_size(self.size_hint, self.height, self.width)
         TextInput:
             id: game
             size_hint: 0.4, 0.1
@@ -67,7 +99,10 @@ WindowManager:
         Label:
             text: "Email: "
             size_hint: 0.2, 0.2
-            pos_hint: {"x":0.15, "top":0.45}
+            pos_hint: {"x":0.17, "top":0.45}
+            halign: 'right'
+            valign: 'middle'
+            font_size: root.font_size(self.size_hint, self.height, self.width)
         TextInput:
             id: email
             size_hint: 0.4, 0.1
@@ -80,6 +115,9 @@ WindowManager:
             on_release:
                 #get this button to check if we have selected player type
                 root.submit()
+            font_size: root.font_size(self.size_hint, self.height, self.width)
+            halign: 'right'
+            valign: 'middle'
               
 
 <RecordingWindow>:
@@ -96,12 +134,14 @@ WindowManager:
             pos_hint:{"x":0.25, "top":0.15}
             on_release:
                 root.startrecording()
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
 
         Label:
             id: recordinglabel
             text: "Center your phone on the net and then click the button to start!"
             size_hint: 0.5, 0.1
             pos_hint:{"x":0.25, "top":0.9}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
             
         Image:
             source: "setpic.png"
@@ -120,41 +160,95 @@ WindowManager:
             pos_hint:{"x":0.1, "top":0.8}
             on_release:
                 root.goback()
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
 
 
-<HostPlayersChoiceWindow>
+<HostPlayersChoiceWindow>:
+    sportdrop:sportdrop
+    filedrop: filedrop
+    offensedrop: offensedrop
+    defensedrop: defensedrop
     name: "playeramountchoice"
 
     FloatLayout:
+        Button:
+            text: 'Continue'
+            size_hint: 0.3, 0.1
+            pos_hint: {'center': (0.5, 0.1)}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+            on_press: root.continue_on()
         Label:
-            text: "Please choose how many players you expect to be recording data in this game:"
-            size_hint: 0.25, 0.1
-            pos_hint: {"x":0.375, "top":0.85}
-            
-        Button:
-            text: "1 Player (Only myself)"
-            size_hint: 0.2, 0.1
-            pos_hint:{"x":0.2, "top":0.6}
-            on_release:
-                root.choosenum(1)
+            text: 'Sport Type'
+            size_hint: 0.3, 0.1
+            pos_hint: {'center': (0.3, 0.9)}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        Spinner:
+            id: sportdrop
+            size_hint: 0.3, 0.1
+            pos_hint: {'center':(0.7,0.9)}
+            text: 'Roundnet'
+            values: 'Roundnet', 'Basketball', 'Soccer', 'Football', 'Tennis', 'Swimming', 'Hockey'
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+            on_text: root.update_spinners()
 
-        Button:
-            text: "2 Players"
-            size_hint: 0.2, 0.1
-            pos_hint:{"x":0.6, "top":0.6}
-            on_release:
-                root.choosenum(2)
+        Label:
+            text: 'File Type to Export Data'
+            size_hint: 0.3, 0.1
+            pos_hint: {'center': (0.3, 0.7)}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        Spinner:
+            id: filedrop
+            size_hint: 0.3, 0.1
+            pos_hint: {'center':(0.7,0.7)}
+            text: 'CSV File'
+            values: 'CSV File', 'JSON File'
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
 
-        Button:
-            text: "3 Players"
-            size_hint: 0.2, 0.1
-            pos_hint:{"x":0.2, "top":0.3}
-            on_release:
-                root.choosenum(3)
+        Label:
+            text: 'Number of Players Starting on Offense'
+            size_hint: 0.3, 0.1
+            pos_hint: {'center': (0.3, 0.5)}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        Spinner:
+            id: offensedrop
+            size_hint: 0.3, 0.1
+            pos_hint: {'center':(0.7,0.5)}
+            text: '2'
+            values: '2', '1', '0'
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        
+        Label:
+            text: 'Number of Players Starting on Defense'
+            size_hint: 0.3, 0.1
+            pos_hint: {'center': (0.3, 0.3)}
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        Spinner:
+            id: defensedrop
+            size_hint: 0.3, 0.1
+            pos_hint: {'center':(0.7,0.3)}
+            text: '2'
+            values: '2', '1', '0'
+            font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
 
-        Button:
-            text: "4 Players"
-            size_hint: 0.2, 0.1
-            pos_hint:{"x":0.6, "top":0.3}
-            on_release:
-                root.choosenum(4)
+<TeamChoiceWindow>:
+    team_type: team_type
+    name: 'teamchoice'
+    Label:
+        text: 'Choose the team are you starting on'
+        size_hint: 0.4, 0.1
+        pos_hint: {'center': (0.5, 0.8)}
+        font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+    Spinner:
+        id: team_type
+        size_hint: 0.4, 0.2
+        pos_hint: {'center':(0.5,0.6)}
+        text: 'Offense'
+        values: 'Offense', 'Defense'
+        font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+    Button:
+        text: 'Continue'
+        size_hint: 0.4, 0.1
+        pos_hint: {'center': (0.5, 0.2)}
+        font_size: root.font_size(self.size_hint, self.height, self.width, self.text)
+        on_press: root.continue_on()
+
