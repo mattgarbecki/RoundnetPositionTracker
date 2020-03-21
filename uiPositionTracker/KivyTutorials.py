@@ -13,13 +13,6 @@ from kivy.clock import Clock
 #from kivy.utils import platform
 from plyer import accelerometer
 
-# Global variables
-gameData = dict()
-gameData_x = 0
-gameData_y = 0
-gameData_z = 0
-start_time = 0.0
-
 #first screen and transition
 class OpeningScreen(Screen):
     def change_screen(self):
@@ -42,6 +35,7 @@ class MainWindow(Screen):
     username = ObjectProperty(None)
     game = ObjectProperty(None)
     email = ObjectProperty(None)
+
     #player type represents if they are host, 1 is host and 0 is player
     playertype = ObjectProperty(None)
     #controls what the submit button will do
@@ -76,7 +70,13 @@ class MainWindow(Screen):
 class RecordingWindow(Screen):
     '''this function responds to the finish game button, will hook to back end to
     stop collecting data'''
+
+    gameData = {0.0:[0, 0, 0]}
+    elapsed_time = 0.0
     
+    def return_data(self):
+        return self.gameData
+
     def get_data(self):
         self.ids.acceldata.text = accelerometer.acceleration
         
@@ -106,23 +106,25 @@ class RecordingWindow(Screen):
             self.ids.recordinglabel.text = "Finished Game! Waiting for other's data to send!"
             self.ids.recordbutton.disabled = True
             
-    def get_acceleration(self, dt): 
-        global gameData, gameData_x, gameData_y, gameData_z, start_time
+    def get_acceleration(self, dt):
 
         val = accelerometer.acceleration[:3]
-        start_time = start_time + 0.20
+
+        gameData_prev = self.gameData[self.elapsed_time]
+        gameData_curr = []
 
         if not val == (None, None, None):
 
-            gameData_x = gameData_x + val[0]
-            gameData_y = gameData_y + val[1]
-            gameData_z = gameData_z + val[2]
+            gameData_curr[0] = gameData_prev[0] + val[0]
+            gameData_curr[1] = gameData_prev[1] + val[1]
+            gameData_curr[2] = gameData_prev[2] + val[2]
 
-            self.ids.acceldatax.text = "X: " + str(gameData_x)
-            self.ids.acceldatay.text = "Y: " + str(gameData_y)
-            self.ids.acceldataz.text = "Z: " + str(gameData_z)
-        
-        gameData[start_time] = [gameData_x, gameData_y, gameData_z]
+            self.ids.acceldatax.text = "X: " + str(gameData_curr[0])
+            self.ids.acceldatay.text = "Y: " + str(gameData_curr[1])
+            self.ids.acceldataz.text = "Z: " + str(gameData_curr[2])
+
+        self.elapsed_time += 0.20
+        self.gameData[self.elapsed_time] = gameData_curr
         
     def stoprecording(self):
         animate(ballobj)

@@ -23,8 +23,6 @@ def sendData(link, name):
 
     textdata = ""
 
-    
-
     message = 'Subject: {}\n\n{}\n\nText Based Data: \n{}'.format("GAME: " + DATA["name"], DATA["gamedata"], textdata)
 
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
