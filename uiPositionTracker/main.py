@@ -117,9 +117,9 @@ class RecordingWindow(Screen):
 
         if not acceleration == (None, None, None):
 
-            gameData_curr.append(gameData_prev[0] + (0.04 * acceleration[0]))
-            gameData_curr.append(gameData_prev[1] + (0.04 * acceleration[1]))
-            gameData_curr.append(gameData_prev[2] + (0.04 * acceleration[2]))
+            gameData_curr.append(gameData_prev[0] + (0.0025 * acceleration[0]))
+            gameData_curr.append(gameData_prev[1] + (0.0025 * acceleration[1]))
+            gameData_curr.append(gameData_prev[2] + (0.0025 * acceleration[2]))
 
             self.ids.acceldatax.text = "X: " + str(gameData_curr[0])
             self.ids.acceldatay.text = "Y: " + str(gameData_curr[1])
