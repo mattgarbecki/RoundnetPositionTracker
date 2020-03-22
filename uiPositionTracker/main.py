@@ -88,8 +88,7 @@ class RecordingWindow(Screen):
 
     
     def startrecording(self):
-        popup = Popup(title='Player Selection Error',
-                content = Label(text='Make sure to center your phone on the net before continuing'),
+        popup = Popup(content = Label(text='Make sure to center your phone on the net before continuing'),
                 size_hint = (0.4, 0.4)) 
         popup.open()
         if self.ids.recordbutton.text == "Start Recording Positions":
