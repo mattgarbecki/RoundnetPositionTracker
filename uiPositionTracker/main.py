@@ -115,9 +115,9 @@ class RecordingWindow(Screen):
 
         if not val == (None, None, None):
 
-            gameData_curr[0] = gameData_prev[0] + val[0]
-            gameData_curr[1] = gameData_prev[1] + val[1]
-            gameData_curr[2] = gameData_prev[2] + val[2]
+            gameData_curr.append(gameData_prev[0] + val[0])
+            gameData_curr.append(gameData_prev[1] + val[1])
+            gameData_curr.append(gameData_prev[2] + val[2])
 
             self.ids.acceldatax.text = "X: " + str(gameData_curr[0])
             self.ids.acceldatay.text = "Y: " + str(gameData_curr[1])
