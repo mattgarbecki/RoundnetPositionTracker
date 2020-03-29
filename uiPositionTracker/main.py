@@ -1,6 +1,5 @@
-__version__ = "1.1"
+__version__ = "1.1.3"
 #importing packages
-import plyer
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
@@ -123,6 +122,10 @@ class RecordingWindow(Screen):
             self.ids.acceldatax.text = "X: " + str(gameData_curr[0])
             self.ids.acceldatay.text = "Y: " + str(gameData_curr[1])
             self.ids.acceldataz.text = "Z: " + str(gameData_curr[2])
+
+            self.ids.xaccellab.text = "X: " + str(acceleration[0])
+            self.ids.yaccellab.text = "Y: " + str(acceleration[1])
+            self.ids.zaccellab.text = "Z: " + str(acceleration[2])
 
         self.elapsed_time += 0.20
         self.gameData[self.elapsed_time] = gameData_curr
