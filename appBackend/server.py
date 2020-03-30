@@ -2,19 +2,17 @@ import requests
 import socket
 import sys
 import random
-from threading import Thread
 import smtplib, ssl, json
 
-clients = []
-client_data = dict()
+urls = json.loads(open('./endpoints.json').read())
 
-def getDataPoint():
+def getData():
     return [1,1]
 
+"""
 def sendData(link, name):
-    global client_data
     # SEND TO SERVER
-    DATA = {"gamedata": client_data, "name":name}
+    DATA = {"gamedata": user_data, "name":name}
 
     port = 465  # For SSL
 
@@ -30,94 +28,36 @@ def sendData(link, name):
         server.sendmail("leawoodmax@gmail.com", "leawoodmax@yahoo.com", message)
         server.quit()
     print("done")
+"""
 
+def manageApp():
 
-def runServer(port):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # api url
+    apiAddress = "http://localhost:3500"
 
-    # Bind the socket to the port
-    server_address = (socket.gethostbyname(socket.gethostname()), port)
-    print('starting up on {} port {}'.format(*server_address))
-    sock.bind(server_address)
+    # somehow get this data from kivy
+    NAME = input("user name: ")
+    HOST = input('host (1 or 0): ')
+    game_id = -1
 
-    # Listen for incoming connections
-    sock.listen(2)
-    trds = []
-    
-    for i in range(2):
-        try:
-            c, addr = sock.accept() 
-            clients.append(addr)
-            t = Thread(target=clientHandler, args = (c, addr))
-            trds.append(t)
-            t.daemon = True
-            t.start()
-        except:
-            print("Keyboard Interupt, goodbye")
-            break
-    
-    t = Thread(target=selfHandler)
-    trds.append(t)
-    t.daemon = True
-    t.start()
+    if HOST == "0":
+        player_count = int(input("how many? "))
+        PARAMS = {'player_count': player_count} 
+        res = requests.post(url = apiAddress + "/createGame", json = PARAMS)
+        game_id = json.loads(json.loads(res.text))["id"]
 
-    for t in trds:
-        t.join()
+        if res.status_code != 200:
+            print("ERROR: No Connection")
+            quit()
 
-    sock.close()
+    else:
+        game_id = input("game id: ")
 
-def selfHandler():
-    data = ""
-    client_data["host"] = []
-    client_data["host"] = data
-    return
+    complete_data = [1,2,3,4]
 
-def clientHandler(c, addr):
-    global clients, client_data
-    client_data[addr[1]] = []
-    print(addr, "is Connected")
-    try:
-        while True:
-            data = c.recv(1024).decode("UTF-8").split("%")
-            if not data: 
-                break
-            elif data[0] == "quit":
-                print("Removed client", addr)
-                clients.remove(addr)
-                return
-            
-            client_data[addr[1]].append({"text": data[0], "time":data[1]})
-            
-    except:
-        print("Removed client", addr)
-        clients.remove(addr)
-        return
+    PARAMS = {'id': game_id, 'name': NAME, 'data': complete_data} 
+    res = requests.post(url = apiAddress + "/sendToGame", json = PARAMS)
 
-def manageServer():
-    LINK = "http://localhost:3500"
-
-    # GET GAME NAME FROM UI
-    NAME = input("game name: ")
-
-    URL = LINK + "/hostgame"
-    PORT = random.randint(1, 65535)
-    PARAMS = {'name':NAME, 'address':socket.gethostbyname(socket.gethostname()), 'port':PORT} 
-    r = requests.post(url = URL, json = PARAMS)
-
-    if r.status_code != 200:
-        print("ERROR: No Connection")
-        quit()
-
-    runServer(PORT)
-    #sendData(LINK, NAME)
-    
-    URL = LINK + "/remove"
-    PARAMS = {'name':NAME}
-    r = requests.get(url = URL, json = PARAMS)
-
-    if r.status_code != 200:
-        print("ERROR: No Connection")
-        quit()
 
 if __name__ == "__main__":
-    manageServer()
+    manageApp()

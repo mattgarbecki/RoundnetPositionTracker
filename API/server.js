@@ -2,81 +2,65 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+var fs = require('fs');
 
+
+// SERVER SETTINGS
 var app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.listen(3500);
 
-translateToCSV('a');
 
-var address_book = new Map();
+// GLOBAL VARIABLES
+var gameDataStore = new Map();
 
-app.post("/hostgame", (req, res) => {
+
+// APIs
+app.post("/createGame", (req, res) => {
 
     var content = req.body;
 
-    if(content.name.length <= 0 || content.address.length <= 0) {
-        res.send("INVALID");
-        return;
-    }
-    if(address_book.has(content.name)) {
-        res.send("USED");
-        return;
+    var unique_id = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+
+    while(gameDataStore.has(unique_id)) {
+        unique_id = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
     }
 
-    address_book.set(content.name, [content.address, content.port]);
-    res.send("OK");
+    gameDataStore.set(unique_id.toString(), new Map());
+    gameDataStore.get(unique_id.toString()).set('max_player_count', parseInt(content.player_count));
+    gameDataStore.get(unique_id.toString()).set('player_count', 0);
 
+    console.log(gameDataStore);
+
+    res.json(JSON.stringify({"id": unique_id.toString()}));
 });
 
-app.get("/address", (req, res) => {
+app.post("/sendToGame", (req, res) => {
 
-    var content = req.query;
+    var content = req.body;
 
-    if(content.name.length <= 0) {
-        res.send("INVALID");
-        return;
-    }
-    if(!address_book.has(content.name)) {
-        res.send("NONAME");
+    if(!gameDataStore.has(content.id)) {
+        res.send("No game found");
         return;
     }
 
-    res.send(address_book.get(content.name));
+    gameDataStore.get(content.id).set(content.name, content.data);
+    gameDataStore.get(content.id).set('player_count', gameDataStore.get(content.id).get('player_count') + 1);
 
+    console.log(gameDataStore);
+
+    // if the all players have sent their information
+    if(gameDataStore.get(content.id).get('player_count') === gameDataStore.get(content.id).get('max_player_count')) {
+
+        // send data to textfile for now, but in future send to database
+        var game_data = Object.fromEntries(gameDataStore.get(content.id));
+
+        delete game_data['player_count'];
+        delete game_data['max_player_count'];
+
+        fs.writeFileSync("data.txt", JSON.stringify(game_data));
+    }
+
+    res.send(JSON.stringify(gameDataStore.get(content.id)));
 });
-
-app.get("/remove", (req, res) => {
-
-    var content = req.query;
-
-    if(!address_book.has(content.name)) {
-        res.send("NONAME");
-        return;
-    }
-
-    address_book.delete(content.name);
-    res.send("OK");
-
-});
-
-
-function translateToCSV(data) {
-    const rows = [
-        ["time", "x", "y", "z"],
-        ["1", "0.1", "0.2", "-0.5"],
-        ["2", "-0.5", "0.1", "-0.3"],
-        ["3", "-0.3", "0.1", "0.5"]
-    ];
-    
-    let csvContent = "";
-    
-    rows.forEach(function(rowArray) {
-        let row = rowArray.join(",");
-        csvContent += row + "\r\n";
-    });
-
-    var encodedUri = encodeURI(csvContent);
-    console.log(csvContent);
-}

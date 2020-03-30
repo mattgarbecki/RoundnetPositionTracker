@@ -1,12 +1,7 @@
 import requests
 import socket
-import astropy.io.misc.asdf.tags.time.tests.test_time
-import sensordroid
+import time
 
-
-def getDataPoint():
-    sensordroid
-    return 
 
 def runClient(address, port):
     # Create a TCP/IP socket
