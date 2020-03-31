@@ -13,6 +13,10 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 #from kivy.utils import platform
 from plyer import accelerometer
+import os.path, json
+
+# Global Variables
+user_data = json.loads(open(os.path.dirname(__file__) + '../data.json').read())
 
 #first screen and transition
 class OpeningScreen(Screen):
