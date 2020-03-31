@@ -59,7 +59,7 @@ app.post("/sendToGame", (req, res) => {
         delete game_data['player_count'];
         delete game_data['max_player_count'];
 
-        fs.writeFileSync("data.txt", JSON.stringify(game_data));
+        fs.writeFileSync("./logs/" + content.id + ".txt", JSON.stringify(game_data));
     }
 
     res.send(JSON.stringify(gameDataStore.get(content.id)));

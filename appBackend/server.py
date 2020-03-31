@@ -7,7 +7,7 @@ import json
 import os.path
 
 urls = json.loads(open('./endpoints.json').read())
-data_file = "test_data.json"
+data_file = "data/test_data.json"
 
 def wait_for_null(keys):
     player_data = json.loads(open(os.path.dirname(__file__) + '../' + data_file).read())
